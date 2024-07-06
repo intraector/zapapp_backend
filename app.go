@@ -8,9 +8,12 @@ import (
 
 	"github.com/go-sql-driver/mysql"
 
-	generation "zap/internal/dict/generation/search"
-	mark "zap/internal/dict/mark/search"
-	model "zap/internal/dict/model/search"
+	bodyTypes "zap/internal/dict/body_types/search"
+	brands "zap/internal/dict/brands/search"
+	generations "zap/internal/dict/generations/search"
+	models "zap/internal/dict/models/search"
+	modifications "zap/internal/dict/modifications/search"
+	years "zap/internal/dict/years/search"
 )
 
 var db *sql.DB
@@ -67,9 +70,17 @@ func main() {
 	// }
 
 	router := gin.Default()
-	router.GET("/marks", mark.Search(dictDB))
-	router.GET("/models", model.Search(dictDB))
-	router.GET("/generations", generation.Search(dictDB))
+	v1 := router.Group("/api/v1")
+
+	dict := v1.Group("/dict")
+	{
+		dict.GET("/brands", brands.Search(dictDB))
+		dict.GET("/models", models.Search(dictDB))
+		dict.GET("/generations", generations.Search(dictDB))
+		dict.GET("/body_types", bodyTypes.Search(dictDB))
+		dict.GET("/modifications", modifications.Search(dictDB))
+		dict.GET("/years", years.Search(dictDB))
+	}
 	// router.GET("/albums", getAlbums)
 	// router.GET("/albums/:id", getAlbumByID)
 	// router.POST("/albums", postAlbums)

@@ -1,18 +1,18 @@
-package car_mark
+package car_brands
 
 import (
 	"database/sql"
 	"fmt"
 
-	"github.com/theritikchoure/logx"
+	tools "zap/internal/_shared"
 )
 
-type carMark struct {
+type carBrand struct {
 	ID    int
 	Label string `json:"label"`
 }
 
-func searchInDB(dictDB *sql.DB, label string, limit int) ([]carMark, error) {
+func searchInDB(dictDB *sql.DB, label string, limit int) ([]carBrand, error) {
 	query := fmt.Sprintf(`
 		SELECT id_car_mark, name FROM car_mark
 		WHERE name LIKE '%v%%' LIMIT %v`, label, limit)
@@ -23,14 +23,14 @@ func searchInDB(dictDB *sql.DB, label string, limit int) ([]carMark, error) {
 	}
 	defer rows.Close()
 
-	var output []carMark
+	var output []carBrand
 
 	for rows.Next() {
-		var item carMark
+		var item carBrand
 
 		if err := rows.Scan(&item.ID, &item.Label); err != nil {
 			errS := fmt.Sprintf("/marks\n label: %q, error: %v", label, err)
-			logx.Log(errS, logx.FGRED, logx.BGBLACK)
+			tools.Log(errS)
 			continue
 		}
 

@@ -1,11 +1,11 @@
-package car_mark
+package car_brands
 
 import (
 	"database/sql"
 	"net/http"
 	"strconv"
 
-	"github.com/theritikchoure/logx"
+	tools "zap/internal/_shared"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,10 +22,11 @@ func Search(dictDB *sql.DB) gin.HandlerFunc {
 			limit = 20
 		}
 
+		defer tools.AbortOnPanic(c)
+
 		list, err := searchInDB(dictDB, query, limit)
 		if err != nil {
-			logx.Log(query, logx.FGRED, logx.BGBLACK)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+			tools.AbortWithErr500(c, err)
 		}
 
 		c.IndentedJSON(http.StatusOK, list)
