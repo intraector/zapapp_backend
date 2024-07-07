@@ -14,21 +14,15 @@ import (
 	models "zap/internal/dict/models/search"
 	modifications "zap/internal/dict/modifications/search"
 	years "zap/internal/dict/years/search"
+	zapsCreate "zap/internal/zaps/create"
 )
 
-var db *sql.DB
+var zapDB *sql.DB
 var dictDB *sql.DB
 
 func main() {
+	var err error
 
-	// cfg := mysql.Config{
-	// 	User:                 "root",
-	// 	Passwd:               "",
-	// 	Net:                  "tcp",
-	// 	Addr:                 "localhost:3306",
-	// 	DBName:               "zapdb",
-	// 	AllowNativePasswords: true,
-	// }
 	dictConfig := mysql.Config{
 		User:                 "root",
 		Passwd:               "",
@@ -37,37 +31,25 @@ func main() {
 		DBName:               "dictdb",
 		AllowNativePasswords: true,
 	}
-
-	var err error
-
 	dictDB, err = sql.Open("mysql", dictConfig.FormatDSN())
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer dictDB.Close()
 
-	// db, err = sql.Open("mysql", cfg.FormatDSN())
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// res, err := dictDB.Query("SHOW TABLES")
-
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// albums, err := albumsByArtist("John Coltrane")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Printf("Albums found: %v\n", albums)
-
-	// var table string
-
-	// for res.Next() {
-	// 	res.Scan(&table)
-	// 	fmt.Println(table)
-	// }
+	zapConfig := mysql.Config{
+		User:                 "root",
+		Passwd:               "",
+		Net:                  "tcp",
+		Addr:                 "localhost:3306",
+		DBName:               "zapdb",
+		AllowNativePasswords: true,
+	}
+	zapDB, err = sql.Open("mysql", zapConfig.FormatDSN())
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer zapDB.Close()
 
 	router := gin.Default()
 	v1 := router.Group("/api/v1")
@@ -81,9 +63,10 @@ func main() {
 		dict.GET("/modifications", modifications.Search(dictDB))
 		dict.GET("/years", years.Search(dictDB))
 	}
-	// router.GET("/albums", getAlbums)
-	// router.GET("/albums/:id", getAlbumByID)
-	// router.POST("/albums", postAlbums)
+	zaps := v1.Group("/zaps")
+	{
+		zaps.POST("/create", zapsCreate.Create(zapDB))
+	}
 
 	router.Run("localhost:8080")
 

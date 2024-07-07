@@ -39,7 +39,7 @@ func search(dictDB *sql.DB, req carModelReq) ([]carModel, error) {
 
 		if err := rows.Scan(&item.ID, &item.Label); err != nil {
 			errS := fmt.Sprintf("/models\n req: %v, error: %v", req, err)
-			tools.Log(errS)
+			tools.Loge(errS)
 			continue
 		}
 

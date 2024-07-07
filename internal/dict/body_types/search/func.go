@@ -38,7 +38,7 @@ func searchInDB(dictDB *sql.DB, req carBodyTypeReq) ([]carBodyType, error) {
 
 		if err := rows.Scan(&item.ID, &item.Label); err != nil {
 			errS := fmt.Sprintf("/bodyType\n req: %v, error: %v", req, err)
-			tools.Log(errS)
+			tools.Loge(errS)
 			continue
 		}
 

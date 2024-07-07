@@ -21,7 +21,7 @@ func Search(dictDB *sql.DB) gin.HandlerFunc {
 
 		brandIdParam := c.Query("brandID")
 		if req.brandID, err = strconv.Atoi(brandIdParam); err != nil {
-			tools.Log(fmt.Sprint(err))
+			tools.Loge(fmt.Sprint(err))
 			c.AbortWithStatusJSON(
 				http.StatusUnprocessableEntity,
 				gin.H{"error": "brandID is required"},
@@ -31,7 +31,7 @@ func Search(dictDB *sql.DB) gin.HandlerFunc {
 
 		bodyTypeIdParam := c.Query("bodyTypeID")
 		if req.bodyTypeID, err = strconv.Atoi(bodyTypeIdParam); err != nil {
-			tools.Log(fmt.Sprint(err))
+			tools.Loge(fmt.Sprint(err))
 			c.AbortWithStatusJSON(
 				http.StatusUnprocessableEntity,
 				gin.H{"error": "bodyTypeID is required"},

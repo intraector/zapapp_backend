@@ -19,7 +19,7 @@ func Search(dictDB *sql.DB) gin.HandlerFunc {
 
 		brandIdParam := c.Query("brandID")
 		if req.brandID, err = strconv.Atoi(brandIdParam); err != nil {
-			tools.Log(fmt.Sprint(err))
+			tools.Loge(fmt.Sprint(err))
 			c.AbortWithStatusJSON(
 				http.StatusUnprocessableEntity,
 				gin.H{"error": "brandID is required"},
@@ -29,7 +29,7 @@ func Search(dictDB *sql.DB) gin.HandlerFunc {
 
 		modelIdParam := c.Query("modelID")
 		if req.modelID, err = strconv.Atoi(modelIdParam); err != nil {
-			tools.Log(fmt.Sprint(err))
+			tools.Loge(fmt.Sprint(err))
 			c.AbortWithStatusJSON(
 				http.StatusUnprocessableEntity,
 				gin.H{"error": "modelID is required"},
@@ -38,7 +38,7 @@ func Search(dictDB *sql.DB) gin.HandlerFunc {
 		}
 		genIdParam := c.Query("genID")
 		if req.genID, err = strconv.Atoi(genIdParam); err != nil {
-			tools.Log(fmt.Sprint(err))
+			tools.Loge(fmt.Sprint(err))
 			c.AbortWithStatusJSON(
 				http.StatusUnprocessableEntity,
 				gin.H{"error": "genID is required"},

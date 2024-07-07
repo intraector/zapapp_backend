@@ -14,8 +14,9 @@ import (
 func Search(dictDB *sql.DB) gin.HandlerFunc {
 
 	fn := func(c *gin.Context) {
-		defer tools.AbortOnPanic(c)
 
+		defer tools.AbortOnPanic(c)
+		tools.LogRequest(c)
 		var req carGenerationReq
 		var err error
 
@@ -23,7 +24,7 @@ func Search(dictDB *sql.DB) gin.HandlerFunc {
 
 		brandParam := c.Query("brandID")
 		if req.brandID, err = strconv.Atoi(brandParam); err != nil {
-			tools.Log(fmt.Sprint(err))
+			tools.Loge(fmt.Sprint(err))
 			c.AbortWithStatusJSON(
 				http.StatusUnprocessableEntity,
 				gin.H{"error": "brandID is required"},

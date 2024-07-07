@@ -22,7 +22,7 @@ func Search(dictDB *sql.DB) gin.HandlerFunc {
 		brandIdParam := c.Query("brandID")
 		req.brandID, err = strconv.Atoi(brandIdParam)
 		if err != nil {
-			tools.Log(fmt.Sprint(err))
+			tools.Loge(fmt.Sprint(err))
 			c.AbortWithStatusJSON(
 				http.StatusUnprocessableEntity,
 				gin.H{"error": "markID is required"},

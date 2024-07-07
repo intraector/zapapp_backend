@@ -30,7 +30,7 @@ func searchInDB(dictDB *sql.DB, label string, limit int) ([]carBrand, error) {
 
 		if err := rows.Scan(&item.ID, &item.Label); err != nil {
 			errS := fmt.Sprintf("/marks\n label: %q, error: %v", label, err)
-			tools.Log(errS)
+			tools.Loge(errS)
 			continue
 		}
 
