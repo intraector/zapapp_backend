@@ -1,41 +1,29 @@
-package car_years
+package dict_repo
 
 import (
-	"database/sql"
 	"fmt"
 
 	tools "zap/internal/_shared"
+	dict_model "zap/internal/dict/domain"
 )
 
-type carYearsReq struct {
-	brandID int
-	modelID int
-	genID   int
-	limit   int
-}
-
-type carYear struct {
-	ID    int
-	Label *string `json:"label"`
-}
-
-func searchInDB(dictDB *sql.DB, req carYearsReq) ([]carYear, error) {
+func (r *Repo) Years(req dict_model.Req) ([]dict_model.DTO, error) {
 	query := fmt.Sprintf(`
 		SELECT id, year FROM dictdb.year 
-		WHERE  id_car_make =%v AND id_car_model =%v AND id_car_generation = %v 
-		LIMIT %v`,
-		req.brandID, req.modelID, req.genID, req.limit,
+		WHERE  id_car_make =%d AND id_car_model =%d AND id_car_generation = %d 
+		LIMIT %d`,
+		req.BrandID, req.ModelID, req.GenID, req.Limit,
 	)
 
-	rows, err := dictDB.Query(query)
+	rows, err := r.DB.Query(query)
 	if err != nil {
 		return nil, fmt.Errorf("/years\n req: %v, error: %v", req, err)
 	}
 	defer rows.Close()
 
-	var output []carYear
+	var output []dict_model.DTO
 	for rows.Next() {
-		var item carYear
+		var item dict_model.DTO
 
 		if err := rows.Scan(&item.ID, &item.Label); err != nil {
 			errS := fmt.Sprintf("/years\n req: %v, error: %v", req, err)

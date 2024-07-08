@@ -5,6 +5,7 @@ go 1.22.4
 require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-sql-driver/mysql v1.8.1
+	github.com/gorilla/schema v1.4.1
 	github.com/theritikchoure/logx v1.1.0
 	github.com/withmandala/go-log v0.1.0
 )

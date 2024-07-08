@@ -25,7 +25,7 @@ func Search(dictDB *sql.DB) gin.HandlerFunc {
 			tools.Loge(fmt.Sprint(err))
 			c.AbortWithStatusJSON(
 				http.StatusUnprocessableEntity,
-				gin.H{"error": "markID is required"},
+				gin.H{"error": "brandID is required"},
 			)
 			return
 		}
