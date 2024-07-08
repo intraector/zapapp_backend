@@ -7,7 +7,7 @@ import (
 	dict_model "zap/internal/dict/domain"
 )
 
-func (r *Repo) Generations(req dict_model.Req) ([]dict_model.DTO, error) {
+func (r *Repo) Generations(req dict_model.Req) ([]dict_model.DTOWithYears, error) {
 	query := fmt.Sprintf(`
 		SELECT id_car_generation, name, year_begin, year_end FROM dictdb.car_generation 
 		WHERE id_car_model =%d AND name LIKE '%s%%' LIMIT %d`,
@@ -20,10 +20,10 @@ func (r *Repo) Generations(req dict_model.Req) ([]dict_model.DTO, error) {
 	}
 	defer rows.Close()
 
-	var output []dict_model.DTO
+	var output []dict_model.DTOWithYears
 
 	for rows.Next() {
-		var item dict_model.DTO
+		var item dict_model.DTOWithYears
 
 		if err := rows.Scan(&item.ID, &item.Label, &item.YearBegin, &item.YearEnd); err != nil {
 			errS := fmt.Sprintf("/generations\n req: %v, error: %v", req, err)
