@@ -1,13 +1,14 @@
-package zaps_create
+package zap_create
 
 import (
 	"database/sql"
 	"fmt"
 
 	tools "zap/internal/_shared"
+	model "zap/internal/zaps/domain"
 )
 
-func create(dictDB *sql.DB, req Car) error {
+func create(dictDB *sql.DB, req model.Car) error {
 
 	query := fmt.Sprintf(`
 		INSERT INTO zapdb.zaps 

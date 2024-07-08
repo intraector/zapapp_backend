@@ -14,7 +14,8 @@ import (
 	models "zap/internal/dict/models/search"
 	modifications "zap/internal/dict/modifications/search"
 	years "zap/internal/dict/years/search"
-	zapsCreate "zap/internal/zaps/create"
+	zapsEndpoints "zap/internal/zaps/data/endpoints"
+	zapsRepo "zap/internal/zaps/data/repo"
 )
 
 var zapDB *sql.DB
@@ -51,6 +52,9 @@ func main() {
 	}
 	defer zapDB.Close()
 
+	repo := zapsRepo.ZapsRepo{DB: zapDB}
+	zapsEndpoints := zapsEndpoints.ZapsEndpoints{}
+	zapsEndpoints.Repo = &repo
 	router := gin.Default()
 	v1 := router.Group("/api/v1")
 
@@ -65,7 +69,7 @@ func main() {
 	}
 	zaps := v1.Group("/zaps")
 	{
-		zaps.POST("/create", zapsCreate.Create(zapDB))
+		zaps.POST("/create", zapsEndpoints.Create())
 	}
 
 	router.Run("localhost:8080")

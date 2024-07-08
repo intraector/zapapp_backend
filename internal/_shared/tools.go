@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"runtime/debug"
 
 	"github.com/gin-gonic/gin"
 	"github.com/theritikchoure/logx"
@@ -35,7 +36,7 @@ func Logr(value string) {
 
 func AbortOnPanic(c *gin.Context) {
 	if r := recover(); r != nil {
-		Loge(fmt.Sprint(r))
+		Loge(fmt.Sprint(r) + "\nStacktrace:\n" + string(debug.Stack()))
 		c.AbortWithStatusJSON(
 			http.StatusInternalServerError,
 			gin.H{"error": "Internal Server Error"},
