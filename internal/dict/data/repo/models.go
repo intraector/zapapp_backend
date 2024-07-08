@@ -1,41 +1,29 @@
-package car_models
+package dict_repo
 
 import (
-	"database/sql"
 	"fmt"
 
 	tools "zap/internal/_shared"
+	dict_model "zap/internal/dict/domain"
 )
 
-type carModelReq struct {
-	brandID int
-	query   string
-	limit   int
-}
-
-type carModel struct {
-	ID    int
-	Label string `json:"label"`
-}
-
-func search(dictDB *sql.DB, req carModelReq) ([]carModel, error) {
-
+func (r *Repo) Models(req dict_model.Req) ([]dict_model.DTO, error) {
 	query := fmt.Sprintf(`
 		SELECT id_car_model, name FROM dictdb.car_model 
-		WHERE id_car_mark =%v AND name LIKE '%v%%' LIMIT %v`,
-		req.brandID, req.query, req.limit)
+		WHERE id_car_mark =%d AND name LIKE '%s%%' 
+		LIMIT %d`,
+		req.BrandID, req.Query, req.Limit,
+	)
 
-	rows, err := dictDB.Query(query)
-
+	rows, err := r.DB.Query(query)
 	if err != nil {
 		return nil, fmt.Errorf("/models\n req: %v, error: %v", req, err)
 	}
 	defer rows.Close()
 
-	var output []carModel
-
+	var output []dict_model.DTO
 	for rows.Next() {
-		var item carModel
+		var item dict_model.DTO
 
 		if err := rows.Scan(&item.ID, &item.Label); err != nil {
 			errS := fmt.Sprintf("/models\n req: %v, error: %v", req, err)

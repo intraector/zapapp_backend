@@ -2,17 +2,16 @@ package dict_handlers
 
 import (
 	"fmt"
+	"net/http"
 
 	tools "zap/internal/_shared"
 	dict_model "zap/internal/dict/domain"
-
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/schema"
 )
 
-func (h *Handlers) Years() gin.HandlerFunc {
+func (h *Handlers) Models() gin.HandlerFunc {
 
 	fn := func(c *gin.Context) {
 		defer tools.AbortOnPanic(c)
@@ -43,23 +42,7 @@ func (h *Handlers) Years() gin.HandlerFunc {
 			return
 		}
 
-		if req.ModelID == 0 {
-			c.AbortWithStatusJSON(
-				http.StatusUnprocessableEntity,
-				gin.H{"error": "modelID is required"},
-			)
-			return
-		}
-
-		if req.GenID == 0 {
-			c.AbortWithStatusJSON(
-				http.StatusUnprocessableEntity,
-				gin.H{"error": "genID is required"},
-			)
-			return
-		}
-
-		list, err := h.Repo.Years(req)
+		list, err := h.Repo.Models(req)
 		if err != nil {
 			tools.AbortWithErr500(c, err)
 			return

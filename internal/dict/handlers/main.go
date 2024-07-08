@@ -13,5 +13,8 @@ type Handlers struct {
 
 func (h *Handlers) Init() {
 	h.Router.GET("/brands", h.Brands())
-	h.Router.GET("/years", h.Years())
+	h.Router.GET("/models", h.Models())
+	h.Router.GET("/generations", h.Generations())
+	h.Router.GET("/body_types", h.Generations())
+	h.Router.GET("/years", h.BodyTypes())
 }

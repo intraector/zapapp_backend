@@ -8,7 +8,6 @@ import (
 	bodyTypes "zap/internal/dict/body_types/search"
 	dict_repo "zap/internal/dict/data/repo"
 	dict_db "zap/internal/dict/database"
-	generations "zap/internal/dict/generations/search"
 	dict_handlers "zap/internal/dict/handlers"
 	models "zap/internal/dict/models/search"
 	modifications "zap/internal/dict/modifications/search"
@@ -29,7 +28,6 @@ func main() {
 	dict := v1.Group("/dict")
 	{
 		dict.GET("/models", models.Search(dictDB))
-		dict.GET("/generations", generations.Search(dictDB))
 		dict.GET("/body_types", bodyTypes.Search(dictDB))
 		dict.GET("/modifications", modifications.Search(dictDB))
 	}

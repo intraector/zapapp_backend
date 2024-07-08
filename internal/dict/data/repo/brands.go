@@ -10,7 +10,8 @@ import (
 func (r *Repo) Brands(req dict_model.Req) ([]dict_model.DTO, error) {
 	query := fmt.Sprintf(`
 		SELECT id_car_mark, name FROM car_mark
-		WHERE name LIKE '%s%%' LIMIT %d`, req.Query, req.Limit)
+		WHERE name LIKE '%s%%' LIMIT %d`, req.Query, req.Limit,
+	)
 
 	rows, err := r.DB.Query(query)
 	if err != nil {

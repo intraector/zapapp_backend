@@ -1,41 +1,29 @@
-package car_generations
+package dict_repo
 
 import (
-	"database/sql"
 	"fmt"
 
 	tools "zap/internal/_shared"
+	dict_model "zap/internal/dict/domain"
 )
 
-type carGenerationReq struct {
-	brandID int
-	query   string
-	limit   int
-}
-
-type carGeneration struct {
-	ID        int
-	Label     *string `json:"label"`
-	YearBegin *int    `json:"year_begin"`
-	YearEnd   *int    `json:"year_end"`
-}
-
-func search(dictDB *sql.DB, req carGenerationReq) ([]carGeneration, error) {
+func (r *Repo) Generations(req dict_model.Req) ([]dict_model.DTO, error) {
 	query := fmt.Sprintf(`
 		SELECT id_car_generation, name, year_begin, year_end FROM dictdb.car_generation 
-		WHERE id_car_model =%v AND name LIKE '%v%%' LIMIT %v`,
-		req.brandID, req.query, req.limit,
+		WHERE id_car_model =%d AND name LIKE '%s%%' LIMIT %d`,
+		req.BrandID, req.Query, req.Limit,
 	)
 
-	rows, err := dictDB.Query(query)
+	rows, err := r.DB.Query(query)
 	if err != nil {
 		return nil, fmt.Errorf("/generations\n req: %v, error: %v", req, err)
 	}
 	defer rows.Close()
 
-	var output []carGeneration
+	var output []dict_model.DTO
+
 	for rows.Next() {
-		var item carGeneration
+		var item dict_model.DTO
 
 		if err := rows.Scan(&item.ID, &item.Label, &item.YearBegin, &item.YearEnd); err != nil {
 			errS := fmt.Sprintf("/generations\n req: %v, error: %v", req, err)

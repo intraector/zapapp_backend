@@ -10,11 +10,16 @@ type Req struct {
 }
 
 type DTO struct {
-	ID    *int
-	Label *string `json:"label"`
+	ID        *int
+	Label     *string `json:"label"`
+	YearBegin *int    `json:"year_begin"`
+	YearEnd   *int    `json:"year_end"`
 }
 
 type IDictRepo interface {
 	Brands(req Req) ([]DTO, error)
+	Models(req Req) ([]DTO, error)
+	Generations(req Req) ([]DTO, error)
+	BodyTypes(req Req) ([]DTO, error)
 	Years(req Req) ([]DTO, error)
 }
