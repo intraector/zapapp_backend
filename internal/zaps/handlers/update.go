@@ -1,7 +1,6 @@
-package zap_create
+package handlers
 
 import (
-	"database/sql"
 	"fmt"
 	"net/http"
 	tools "zap/internal/_shared"
@@ -10,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Create(db *sql.DB) gin.HandlerFunc {
+func (endpoints *Handlers) Update() gin.HandlerFunc {
 
 	fn := func(c *gin.Context) {
 		defer tools.AbortOnPanic(c)
@@ -28,6 +27,14 @@ func Create(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 
+		if car.ID == 0 {
+			c.AbortWithStatusJSON(
+				http.StatusUnprocessableEntity,
+				gin.H{"error": "ID is required"},
+			)
+			return
+		}
+
 		if car.VinCode == "" && car.VinImage == "" {
 			c.AbortWithStatusJSON(
 				http.StatusUnprocessableEntity,
@@ -36,7 +43,7 @@ func Create(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 
-		err = create(db, car)
+		err = endpoints.Repo.Update(&car)
 
 		if err != nil {
 			tools.AbortWithErr500(c, err)

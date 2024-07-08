@@ -1,4 +1,4 @@
-package endpoints
+package handlers
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (endpoints *ZapsEndpoints) Create() gin.HandlerFunc {
+func (h *Handlers) Create() gin.HandlerFunc {
 
 	fn := func(c *gin.Context) {
 		defer tools.AbortOnPanic(c)
@@ -35,7 +35,7 @@ func (endpoints *ZapsEndpoints) Create() gin.HandlerFunc {
 			return
 		}
 
-		err = endpoints.Repo.Create(&car)
+		err = h.Repo.Create(&car)
 
 		if err != nil {
 			tools.AbortWithErr500(c, err)

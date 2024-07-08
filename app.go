@@ -2,61 +2,29 @@ package main
 
 import (
 	"database/sql"
-	"log"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/go-sql-driver/mysql"
-
 	bodyTypes "zap/internal/dict/body_types/search"
 	brands "zap/internal/dict/brands/search"
+	dict_db "zap/internal/dict/database"
 	generations "zap/internal/dict/generations/search"
 	models "zap/internal/dict/models/search"
 	modifications "zap/internal/dict/modifications/search"
 	years "zap/internal/dict/years/search"
-	zapsEndpoints "zap/internal/zaps/data/endpoints"
-	zapsRepo "zap/internal/zaps/data/repo"
+	zaps_repo "zap/internal/zaps/data/repo"
+	zap_db "zap/internal/zaps/database"
+	zap_handlers "zap/internal/zaps/handlers"
 )
 
-var zapDB *sql.DB
 var dictDB *sql.DB
 
 func main() {
-	var err error
-
-	dictConfig := mysql.Config{
-		User:                 "root",
-		Passwd:               "",
-		Net:                  "tcp",
-		Addr:                 "localhost:3306",
-		DBName:               "dictdb",
-		AllowNativePasswords: true,
-	}
-	dictDB, err = sql.Open("mysql", dictConfig.FormatDSN())
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer dictDB.Close()
-
-	zapConfig := mysql.Config{
-		User:                 "root",
-		Passwd:               "",
-		Net:                  "tcp",
-		Addr:                 "localhost:3306",
-		DBName:               "zapdb",
-		AllowNativePasswords: true,
-	}
-	zapDB, err = sql.Open("mysql", zapConfig.FormatDSN())
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer zapDB.Close()
-
-	repo := zapsRepo.ZapsRepo{DB: zapDB}
-	zapsEndpoints := zapsEndpoints.ZapsEndpoints{}
-	zapsEndpoints.Repo = &repo
 	router := gin.Default()
 	v1 := router.Group("/api/v1")
+
+	dictDB = dict_db.DictDB()
+	defer dictDB.Close()
 
 	dict := v1.Group("/dict")
 	{
@@ -67,10 +35,14 @@ func main() {
 		dict.GET("/modifications", modifications.Search(dictDB))
 		dict.GET("/years", years.Search(dictDB))
 	}
-	zaps := v1.Group("/zaps")
-	{
-		zaps.POST("/create", zapsEndpoints.Create())
+
+	zapDB := zap_db.ZapDB()
+	defer zapDB.Close()
+	zapHandlers := zap_handlers.Handlers{
+		Router: v1.Group("/zaps"),
+		Repo:   &zaps_repo.ZapsRepo{DB: zapDB},
 	}
+	zapHandlers.Init()
 
 	router.Run("localhost:8080")
 
