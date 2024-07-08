@@ -5,12 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	bodyTypes "zap/internal/dict/body_types/search"
 	dict_repo "zap/internal/dict/data/repo"
 	dict_db "zap/internal/dict/database"
 	dict_handlers "zap/internal/dict/handlers"
-	models "zap/internal/dict/models/search"
-	modifications "zap/internal/dict/modifications/search"
 	zap_db "zap/internal/zaps/data/database"
 	zaps_repo "zap/internal/zaps/data/repo"
 	zap_handlers "zap/internal/zaps/handlers"
@@ -24,13 +21,6 @@ func main() {
 
 	dictDB = dict_db.DictDB()
 	defer dictDB.Close()
-
-	dict := v1.Group("/dict")
-	{
-		dict.GET("/models", models.Search(dictDB))
-		dict.GET("/body_types", bodyTypes.Search(dictDB))
-		dict.GET("/modifications", modifications.Search(dictDB))
-	}
 
 	dictHandlers := dict_handlers.Handlers{
 		Router: v1.Group("/dict"),

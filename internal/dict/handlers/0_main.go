@@ -15,6 +15,7 @@ func (h *Handlers) Init() {
 	h.Router.GET("/brands", h.Brands())
 	h.Router.GET("/models", h.Models())
 	h.Router.GET("/generations", h.Generations())
-	h.Router.GET("/body_types", h.Generations())
-	h.Router.GET("/years", h.BodyTypes())
+	h.Router.GET("/body_types", h.BodyTypes())
+	h.Router.GET("/modifications", h.Modifications())
+	h.Router.GET("/years", h.Years())
 }

@@ -1,40 +1,28 @@
-package car_modifications
+package dict_repo
 
 import (
-	"database/sql"
 	"fmt"
 
 	tools "zap/internal/_shared"
+	dict_model "zap/internal/dict/domain"
 )
 
-type carModificationsReq struct {
-	brandID    int
-	bodyTypeID int
-	query      string
-	limit      int
-}
-
-type carModification struct {
-	ID    int
-	Label *string `json:"label"`
-}
-
-func searchInDB(dictDB *sql.DB, req carModificationsReq) ([]carModification, error) {
+func (r *Repo) Modifications(req dict_model.Req) ([]dict_model.DTO, error) {
 	query := fmt.Sprintf(`
 		SELECT id_car_modification, name FROM dictdb.car_modification 
-		WHERE id_car_model =%v AND id_car_serie = %v AND name LIKE '%v%%' LIMIT %v`,
-		req.brandID, req.bodyTypeID, req.query, req.limit,
+		WHERE id_car_model =%d AND id_car_serie = %d AND name LIKE '%s%%' LIMIT %d`,
+		req.BrandID, req.BodyTypeID, req.Query, req.Limit,
 	)
 
-	rows, err := dictDB.Query(query)
+	rows, err := r.DB.Query(query)
 	if err != nil {
 		return nil, fmt.Errorf("/modifications\n req: %v, error: %v", req, err)
 	}
 	defer rows.Close()
 
-	var output []carModification
+	var output []dict_model.DTO
 	for rows.Next() {
-		var item carModification
+		var item dict_model.DTO
 
 		if err := rows.Scan(&item.ID, &item.Label); err != nil {
 			errS := fmt.Sprintf("/modifications\n req: %v, error: %v", req, err)

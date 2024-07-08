@@ -21,5 +21,6 @@ type IDictRepo interface {
 	Models(req Req) ([]DTO, error)
 	Generations(req Req) ([]DTO, error)
 	BodyTypes(req Req) ([]DTO, error)
+	Modifications(req Req) ([]DTO, error)
 	Years(req Req) ([]DTO, error)
 }
