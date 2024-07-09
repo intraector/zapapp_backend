@@ -26,7 +26,7 @@ func (h *Handlers) Years() gin.HandlerFunc {
 
 		if err != nil {
 			tools.AbortWithErr422(c, err)
-			tools.LogErrorWithStack(err)
+			tools.LogErrorWithStack(err, req)
 			return
 		}
 
@@ -48,7 +48,7 @@ func (h *Handlers) Years() gin.HandlerFunc {
 		list, err := h.Repo.Years(req)
 		if err != nil {
 			tools.AbortWithErr500(c)
-			tools.LogErrorWithStack(err)
+			tools.LogErrorWithStack(err, req)
 			return
 		}
 

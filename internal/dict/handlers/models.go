@@ -26,7 +26,7 @@ func (h *Handlers) Models() gin.HandlerFunc {
 
 		if err != nil {
 			tools.AbortWithErr422(c, err)
-			tools.LogErrorWithStack(err)
+			tools.LogErrorWithStack(err, req)
 			return
 		}
 
@@ -38,7 +38,7 @@ func (h *Handlers) Models() gin.HandlerFunc {
 		list, err := h.Repo.Models(req)
 		if err != nil {
 			tools.AbortWithErr500(c)
-			tools.LogErrorWithStack(err)
+			tools.LogErrorWithStack(err, req)
 			return
 		}
 

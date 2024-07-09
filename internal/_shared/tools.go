@@ -49,13 +49,13 @@ func Logr(value string) {
 }
 
 func LogError(list ...any) {
-	Logrb(AnyToStr(list))
+	Logr(AnyToStr(list...))
 }
 func LogErrorWithStack(list ...any) {
 	b := strings.Builder{}
-	b.WriteString(AnyToStr(list))
+	b.WriteString(AnyToStr(list...))
 	b.WriteString("Stacktrace:\n" + string(debug.Stack()))
-	Logrb(b.String())
+	Logr(b.String())
 }
 
 func AnyToStr(list ...any) string {
@@ -98,7 +98,7 @@ func LogRequest(c *gin.Context) {
 	if len(bodyBytes) > 0 {
 		var prettyJSON bytes.Buffer
 		if err = json.Indent(&prettyJSON, bodyBytes, "", "  "); err != nil {
-			Logrb(fmt.Sprintf("JSON parse error: %v", err))
+			Logr(fmt.Sprintf("JSON parse error: %v", err))
 			return
 		}
 		Logb(string(prettyJSON.String()))
@@ -128,18 +128,19 @@ func AbortWithErr(c *gin.Context, code int, messages ...any) {
 }
 
 func AbortWithErr500(c *gin.Context, messages ...any) {
-	AbortWithErr(c, http.StatusInternalServerError, messages)
+	AbortWithErr(c, http.StatusInternalServerError, messages...)
 
 }
 
 func AbortOnPanic(c *gin.Context, messages ...any) {
 	if r := recover(); r != nil {
-		AbortWithErr500(c, r, messages)
+		LogErrorWithStack(r)
+		AbortWithErr500(c, messages...)
 	}
 
 }
 
 func AbortWithErr422(c *gin.Context, messages ...any) {
-	AbortWithErr(c, http.StatusUnprocessableEntity, messages)
+	AbortWithErr(c, http.StatusUnprocessableEntity, messages...)
 
 }

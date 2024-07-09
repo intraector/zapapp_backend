@@ -9,7 +9,7 @@ import (
 
 func (r *Repo) BodyTypes(req dict_model.Req) ([]dict_model.DTO, error) {
 	query := fmt.Sprintf(`
-		SELECT id_car_serie, name FROM dictdb.car_serie 
+		SELECT id_car_s erie, name FROM dictdb.car_serie 
 		WHERE id_car_model =%d AND id_car_generation = %d AND name LIKE '%s%%' LIMIT %d`,
 		req.BrandID, req.GenID, req.Query, req.Limit,
 	)
