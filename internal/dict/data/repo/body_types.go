@@ -16,7 +16,7 @@ func (r *Repo) BodyTypes(req dict_model.Req) ([]dict_model.DTO, error) {
 
 	rows, err := r.DB.Query(query)
 	if err != nil {
-		return nil, fmt.Errorf("/bodyType\n req: %v, error: %v", req, err)
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -26,8 +26,7 @@ func (r *Repo) BodyTypes(req dict_model.Req) ([]dict_model.DTO, error) {
 		var item dict_model.DTO
 
 		if err := rows.Scan(&item.ID, &item.Label); err != nil {
-			errS := fmt.Sprintf("/bodyType\n req: %v, error: %v", req, err)
-			tools.Loge(errS)
+			tools.LogError("/bodyType", "Error scanning row", req, err)
 			continue
 		}
 
@@ -35,7 +34,7 @@ func (r *Repo) BodyTypes(req dict_model.Req) ([]dict_model.DTO, error) {
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("/bodyType\n req: %v, error: %v", req, err)
+		return nil, err
 	}
 
 	return output, nil

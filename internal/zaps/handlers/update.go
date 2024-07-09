@@ -19,7 +19,7 @@ func (endpoints *Handlers) Update() gin.HandlerFunc {
 		car := model.Car{}
 
 		if err = c.ShouldBind(&car); err != nil {
-			tools.Loge(fmt.Sprint(err))
+			tools.Logrb(fmt.Sprint(err))
 			c.AbortWithStatusJSON(
 				http.StatusUnprocessableEntity,
 				gin.H{"error": fmt.Sprint(err)},

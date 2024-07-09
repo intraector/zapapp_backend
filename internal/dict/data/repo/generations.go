@@ -16,7 +16,7 @@ func (r *Repo) Generations(req dict_model.Req) ([]dict_model.DTOWithYears, error
 
 	rows, err := r.DB.Query(query)
 	if err != nil {
-		return nil, fmt.Errorf("/generations\n req: %v, error: %v", req, err)
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -26,8 +26,7 @@ func (r *Repo) Generations(req dict_model.Req) ([]dict_model.DTOWithYears, error
 		var item dict_model.DTOWithYears
 
 		if err := rows.Scan(&item.ID, &item.Label, &item.YearBegin, &item.YearEnd); err != nil {
-			errS := fmt.Sprintf("/generations\n req: %v, error: %v", req, err)
-			tools.Loge(errS)
+			tools.LogError("/generations", "Error scanning row", req, err)
 			continue
 		}
 
@@ -35,7 +34,7 @@ func (r *Repo) Generations(req dict_model.Req) ([]dict_model.DTOWithYears, error
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("/generations\n req: %v, error: %v", req, err)
+		return nil, err
 	}
 
 	return output, nil

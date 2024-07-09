@@ -1,8 +1,6 @@
 package dict_handlers
 
 import (
-	"fmt"
-
 	tools "zap/internal/_shared"
 	dict_model "zap/internal/dict/domain"
 
@@ -27,41 +25,30 @@ func (h *Handlers) Years() gin.HandlerFunc {
 		)
 
 		if err != nil {
-			tools.Loge(fmt.Sprint(err))
-			c.AbortWithStatusJSON(
-				http.StatusUnprocessableEntity,
-				gin.H{"error": fmt.Sprint(err)},
-			)
+			tools.AbortWithErr422(c, err)
+			tools.LogErrorWithStack(err)
 			return
 		}
 
 		if req.BrandID == 0 {
-			c.AbortWithStatusJSON(
-				http.StatusUnprocessableEntity,
-				gin.H{"error": "brandID is required"},
-			)
+			tools.AbortWithErr422(c, "brandID is required")
 			return
 		}
 
 		if req.ModelID == 0 {
-			c.AbortWithStatusJSON(
-				http.StatusUnprocessableEntity,
-				gin.H{"error": "modelID is required"},
-			)
+			tools.AbortWithErr422(c, "modelID is required")
 			return
 		}
 
 		if req.GenID == 0 {
-			c.AbortWithStatusJSON(
-				http.StatusUnprocessableEntity,
-				gin.H{"error": "genID is required"},
-			)
+			tools.AbortWithErr422(c, "genID is required")
 			return
 		}
 
 		list, err := h.Repo.Years(req)
 		if err != nil {
-			tools.AbortWithErr500(c, err)
+			tools.AbortWithErr500(c)
+			tools.LogErrorWithStack(err)
 			return
 		}
 

@@ -1,7 +1,6 @@
 package dict_handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	tools "zap/internal/_shared"
@@ -15,7 +14,6 @@ func (h *Handlers) BodyTypes() gin.HandlerFunc {
 
 	fn := func(c *gin.Context) {
 		defer tools.AbortOnPanic(c)
-		// tools.LogRequest(c)
 
 		var err error
 		req := dict_model.Req{Limit: 20}
@@ -26,36 +24,26 @@ func (h *Handlers) BodyTypes() gin.HandlerFunc {
 		)
 
 		if err != nil {
-			tools.Loge(fmt.Sprint(err))
-			c.AbortWithStatusJSON(
-				http.StatusUnprocessableEntity,
-				gin.H{"error": fmt.Sprint(err)},
-			)
+			tools.AbortWithErr422(c, err)
+			tools.LogErrorWithStack(err)
 			return
 		}
 
 		if req.BrandID == 0 {
-			tools.Loge(fmt.Sprint(err))
-			c.AbortWithStatusJSON(
-				http.StatusUnprocessableEntity,
-				gin.H{"error": "brandID is required"},
-			)
+			tools.AbortWithErr422(c, "BrandID is required")
 			return
 		}
 
 		if req.GenID == 0 {
-			tools.Loge(fmt.Sprint(err))
-			c.AbortWithStatusJSON(
-				http.StatusUnprocessableEntity,
-				gin.H{"error": "genID is required"},
-			)
+			tools.AbortWithErr422(c, "genID is required")
 			return
 		}
 
 		list, err := h.Repo.BodyTypes(req)
 
 		if err != nil {
-			tools.AbortWithErr500(c, err)
+			tools.AbortWithErr500(c)
+			tools.LogErrorWithStack(err)
 			return
 		}
 

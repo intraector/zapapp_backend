@@ -26,16 +26,13 @@ func (h *Handlers) Generations() gin.HandlerFunc {
 		)
 
 		if err != nil {
-			tools.Loge(fmt.Sprint(err))
-			c.AbortWithStatusJSON(
-				http.StatusUnprocessableEntity,
-				gin.H{"error": fmt.Sprint(err)},
-			)
+			tools.AbortWithErr422(c, err)
+			tools.LogErrorWithStack(err)
 			return
 		}
 
 		if req.BrandID == 0 {
-			tools.Loge(fmt.Sprint(err))
+			tools.Logrb(fmt.Sprint(err))
 			c.AbortWithStatusJSON(
 				http.StatusUnprocessableEntity,
 				gin.H{"error": "brandID is required"},
@@ -44,9 +41,9 @@ func (h *Handlers) Generations() gin.HandlerFunc {
 		}
 
 		list, err := h.Repo.Generations(req)
-
 		if err != nil {
-			tools.AbortWithErr500(c, err)
+			tools.AbortWithErr500(c)
+			tools.LogErrorWithStack(err)
 			return
 		}
 

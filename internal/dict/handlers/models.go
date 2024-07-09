@@ -1,7 +1,6 @@
 package dict_handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	tools "zap/internal/_shared"
@@ -26,25 +25,20 @@ func (h *Handlers) Models() gin.HandlerFunc {
 		)
 
 		if err != nil {
-			tools.Loge(fmt.Sprint(err))
-			c.AbortWithStatusJSON(
-				http.StatusUnprocessableEntity,
-				gin.H{"error": fmt.Sprint(err)},
-			)
+			tools.AbortWithErr422(c, err)
+			tools.LogErrorWithStack(err)
 			return
 		}
 
 		if req.BrandID == 0 {
-			c.AbortWithStatusJSON(
-				http.StatusUnprocessableEntity,
-				gin.H{"error": "brandID is required"},
-			)
+			tools.AbortWithErr422(c, "BrandID is required")
 			return
 		}
 
 		list, err := h.Repo.Models(req)
 		if err != nil {
-			tools.AbortWithErr500(c, err)
+			tools.AbortWithErr500(c)
+			tools.LogErrorWithStack(err)
 			return
 		}
 
