@@ -27,7 +27,7 @@ func (h *Handlers) Generations() gin.HandlerFunc {
 
 		if err != nil {
 			tools.AbortWithErr422(c, err)
-			tools.LogErrorWithStack(err)
+			tools.LogErrorWithStack(err, req)
 			return
 		}
 
@@ -43,7 +43,7 @@ func (h *Handlers) Generations() gin.HandlerFunc {
 		list, err := h.Repo.Generations(req)
 		if err != nil {
 			tools.AbortWithErr500(c)
-			tools.LogErrorWithStack(err)
+			tools.LogErrorWithStack(err, req)
 			return
 		}
 
