@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/gin-gonic/gin"
@@ -9,8 +10,7 @@ import (
 	dict_db "zap/internal/dict/database"
 	dict_handlers "zap/internal/dict/handlers"
 	zap_db "zap/internal/zaps/data/database"
-	zaps_repo "zap/internal/zaps/data/repo"
-	zap_handlers "zap/internal/zaps/handlers"
+	zap "zap/internal/zaps/handlers"
 )
 
 var dictDB *sql.DB
@@ -22,18 +22,17 @@ func main() {
 	dictDB = dict_db.DictDB()
 	defer dictDB.Close()
 
-	dictHandlers := dict_handlers.Handlers{
-		Router: v1.Group("/dict"),
-		Repo:   &dict_repo.Repo{DB: dictDB},
-	}
+	dictHandlers := dict_handlers.New(
+		v1.Group("/dict"),
+		&dict_repo.Repo{DB: dictDB},
+	)
+
 	dictHandlers.Init()
 
-	zapDB := zap_db.ZapDB()
-	defer zapDB.Close()
-	zapHandlers := zap_handlers.Handlers{
-		Router: v1.Group("/zaps"),
-		Repo:   &zaps_repo.ZapsRepo{DB: zapDB},
-	}
+	zapDB := zap_db.New()
+	defer zapDB.Close(context.Background())
+
+	zapHandlers := zap.New(v1.Group("/zaps"), zapDB)
 	zapHandlers.Init()
 
 	router.Run("localhost:8080")

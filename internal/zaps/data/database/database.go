@@ -1,26 +1,28 @@
 package zap_db
 
 import (
-	"database/sql"
-	"log"
+	"context"
+	"fmt"
+	"os"
 
-	"github.com/go-sql-driver/mysql"
+	tools "zap/internal/_shared"
+
+	"github.com/jackc/pgx/v5"
 )
 
-func ZapDB() *sql.DB {
+func New() *pgx.Conn {
 
-	zapConfig := mysql.Config{
-		User:                 "root",
-		Passwd:               "",
-		Net:                  "tcp",
-		Addr:                 "localhost:3306",
-		DBName:               "zapdb",
-		AllowNativePasswords: true,
-	}
-	zapDB, err := sql.Open("mysql", zapConfig.FormatDSN())
+	conn, err := pgx.Connect(
+		context.Background(),
+		"postgres://postgres:1111@localhost:5432/zap",
+	)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		os.Exit(1)
 	}
-	return zapDB
+
+	tools.Logg("Successfully connected to database")
+
+	return conn
 
 }

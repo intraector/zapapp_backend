@@ -18,8 +18,3 @@ type Car struct {
 	VinImage      string `json:"vinImage"`
 	Comment       string `json:"comment"`
 }
-
-type IZapsRepo interface {
-	Create(Car *Car) error
-	Update(Car *Car) error
-}

@@ -19,3 +19,13 @@ func (h *Handlers) Init() {
 	h.Router.GET("/modifications", h.Modifications())
 	h.Router.GET("/years", h.Years())
 }
+
+func New(
+	Router *gin.RouterGroup,
+	Repo dict_model.IDictRepo,
+) Handlers {
+	output := Handlers{}
+	output.Router = Router
+	output.Repo = Repo
+	return output
+}

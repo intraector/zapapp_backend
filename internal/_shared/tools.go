@@ -75,36 +75,53 @@ func AnyToStr(list ...any) string {
 	return b.String()
 }
 
-func LogRequest(c *gin.Context) {
-	Logb("\n" + c.Request.URL.Path)
+func ReqError(r *http.Request, err error) error {
+	return fmt.Errorf(" %s\n%v", ReqToStr(r), err)
 
-	c.Request.URL.Query()
-	Logb("Query: " + c.Request.URL.RawQuery)
-	Logb("Headers:")
-	for k, v := range c.Request.Header {
-		Logb(fmt.Sprintf("    %v: %v", k, v))
+}
+
+func LogRequest(r *http.Request) {
+	Logg(ReqToStr(r))
+}
+
+func ReqToStr(r *http.Request) string {
+	b := strings.Builder{}
+	b.WriteString("\n❆----------------\n")
+	b.WriteString("| Req: " + r.URL.Path)
+	if len(r.URL.RawQuery) > 0 {
+		b.WriteString("\n| Query: " + r.URL.RawQuery)
+	}
+	if len(r.Header) > 0 {
+		b.WriteString("\n| Headers: {")
+		for k, v := range r.Header {
+			b.WriteString(fmt.Sprintf("\n|    %v: %v", k, v))
+		}
+		b.WriteString("\n| }")
 	}
 	var bodyBytes []byte
 	var err error
-	body := c.Request.Body
+	body := r.Body
 	if body != nil {
 		bodyBytes, err = io.ReadAll(body)
 		if err != nil {
-			fmt.Printf("Body reading error: %v", err)
-			return
+			b.WriteString(fmt.Sprintf("| Body reading error: %v", err))
+			return b.String()
 		}
 	}
 
 	if len(bodyBytes) > 0 {
 		var prettyJSON bytes.Buffer
-		if err = json.Indent(&prettyJSON, bodyBytes, "", "  "); err != nil {
-			Logr(fmt.Sprintf("JSON parse error: %v", err))
-			return
+		if err = json.Indent(&prettyJSON, bodyBytes, "| ", "  "); err != nil {
+			b.WriteString(fmt.Sprintf("| JSON parse error: %v", err))
+			return b.String()
 		}
-		Logb(string(prettyJSON.String()))
+		b.WriteString("\n| Body: ")
+		b.WriteString(string(prettyJSON.String()))
 	} else {
-		Logb("Body: No Body Supplied\n")
+		b.WriteString("\n| Body: No Body Supplied")
 	}
+	b.WriteString("\n❆----------------\n")
+	return b.String()
 }
 
 func AbortWithErr(c *gin.Context, code int, messages ...any) {
@@ -142,5 +159,9 @@ func AbortOnPanic(c *gin.Context, messages ...any) {
 
 func AbortWithErr422(c *gin.Context, messages ...any) {
 	AbortWithErr(c, http.StatusUnprocessableEntity, messages...)
+
+}
+func AbortWithErr404(c *gin.Context, messages ...any) {
+	AbortWithErr(c, http.StatusNotFound, messages...)
 
 }

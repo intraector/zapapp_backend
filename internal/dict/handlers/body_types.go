@@ -41,8 +41,8 @@ func (h *Handlers) BodyTypes() gin.HandlerFunc {
 
 		list, err := h.Repo.BodyTypes(req)
 		if err != nil {
-			tools.AbortWithErr500(c, "Blah blah")
 			tools.LogErrorWithStack(err, req)
+			tools.AbortWithErr500(c)
 			return
 		}
 
