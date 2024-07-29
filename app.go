@@ -6,10 +6,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	zap_db "zap/internal/database"
-	dict_repo "zap/internal/dict/data/repo"
-	dict_db "zap/internal/dict/database"
+	"zap/internal/database/dict_db"
+	"zap/internal/database/zap_db"
 	"zap/internal/dict/dict_endpoints"
+	"zap/internal/dict/dict_repo"
 	"zap/internal/zap/zap_endpoints"
 )
 
