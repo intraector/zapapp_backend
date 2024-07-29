@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	tools "zap/internal/_shared"
+	tools "zap/internal/tools"
 
 	"github.com/jackc/pgx/v5"
 )

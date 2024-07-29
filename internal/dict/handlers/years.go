@@ -1,8 +1,8 @@
 package dict_handlers
 
 import (
-	tools "zap/internal/_shared"
-	dict_model "zap/internal/dict/domain"
+	"zap/internal/dict/dict_model"
+	tools "zap/internal/tools"
 
 	"net/http"
 

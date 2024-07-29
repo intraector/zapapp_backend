@@ -1,30 +1,34 @@
-package handlers
+package zap_handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
-	tools "zap/internal/_shared"
-	model "zap/internal/zaps/domain"
+	"zap/internal/tools"
+	"zap/internal/zaps/zap_model"
 
 	"github.com/gin-gonic/gin"
 )
 
-func (h *Handlers) Create() gin.HandlerFunc {
+func (h *Handlers) Update() gin.HandlerFunc {
 
 	fn := func(c *gin.Context) {
 		defer tools.AbortOnPanic(c)
 		// tools.LogRequest(c.Request)
 
 		var err error
-		car := model.Car{}
+		car := zap_model.Zap{}
 
-		err = c.ShouldBind(&car)
+		err = json.NewDecoder(c.Request.Body).Decode(&car)
 		if err != nil {
 			tools.AbortWithErr422(c, err)
 			return
 		}
 
 		errorStr := strings.Builder{}
+		if car.ID == 0 {
+			errorStr.WriteString("ID is required\n")
+		}
 
 		if car.VinCode == "" && car.VinImage == "" {
 			errorStr.WriteString("Either vinCode or vinImage is required\n")
@@ -36,30 +40,25 @@ func (h *Handlers) Create() gin.HandlerFunc {
 		}
 
 		query := fmt.Sprintf(`
-		INSERT
-		INTO zaps (
-			ID,
-			brand_id, brand_label,
-			model_id, model_label,
-			gen_id, gen_label,
-			body_type_id, body_type_label,
-			mod_id, mod_label,
-			year_id, year,
-			vin_code, vin_image,
-			comment
-		)
-		VALUES (
-			DEFAULT,
-			%d, '%s',
-			%d, '%s',
-			%d, '%s',
-			%d, '%s',
-			%d, '%s',
-			%d, %d,
-			'%s', '%s',
-			'%s'
-			);
+		UPDATE zaps 
+		SET brand_id = %d,
+			brand_label = '%s',
+			model_id = %d,
+			model_label = '%s',
+			gen_id = %d,
+			gen_label = '%s',
+			body_type_id = %d,
+			body_type_label = '%s',
+			mod_id = %d,
+			mod_label = '%s',
+			year_id = %d,
+			year = %d,
+			vin_code = '%s',
+			vin_image = '%s',
+			comment = '%s' 
+			WHERE ID = %d;
 			`,
+
 			car.BrandID, car.BrandLabel,
 			car.ModelID, car.ModelLabel,
 			car.GenID, car.GenLabel,
@@ -68,12 +67,17 @@ func (h *Handlers) Create() gin.HandlerFunc {
 			car.YearID, car.YearValue,
 			car.VinCode, car.VinImage,
 			car.Comment,
+			car.ID,
 		)
 
-		_, err = h.DB.Exec(c, query)
+		tag, err := h.DB.Exec(c, query)
 		if err != nil {
 			tools.LogError(err)
 			tools.AbortWithErr500(c)
+			return
+		}
+		if tag.RowsAffected() == 0 {
+			tools.AbortWithErr404(c)
 			return
 		}
 

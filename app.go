@@ -6,11 +6,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	zap_db "zap/internal/database"
 	dict_repo "zap/internal/dict/data/repo"
 	dict_db "zap/internal/dict/database"
 	dict_handlers "zap/internal/dict/handlers"
-	zap_db "zap/internal/zaps/data/database"
-	zap "zap/internal/zaps/handlers"
+	"zap/internal/zaps/zap_handlers"
 )
 
 var dictDB *sql.DB
@@ -19,7 +19,7 @@ func main() {
 	router := gin.Default()
 	v1 := router.Group("/api/v1")
 
-	dictDB = dict_db.DictDB()
+	dictDB = dict_db.New()
 	defer dictDB.Close()
 
 	dictHandlers := dict_handlers.New(
@@ -32,7 +32,7 @@ func main() {
 	zapDB := zap_db.New()
 	defer zapDB.Close(context.Background())
 
-	zapHandlers := zap.New(v1.Group("/zaps"), zapDB)
+	zapHandlers := zap_handlers.New(v1.Group("/zaps"), zapDB)
 	zapHandlers.Init()
 
 	router.Run("localhost:8080")

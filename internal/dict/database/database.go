@@ -7,7 +7,7 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
-func DictDB() *sql.DB {
+func New() *sql.DB {
 
 	dictConfig := mysql.Config{
 		User:                 "root",

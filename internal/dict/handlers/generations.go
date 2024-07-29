@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	tools "zap/internal/_shared"
-	dict_model "zap/internal/dict/domain"
+	"zap/internal/dict/dict_model"
+	tools "zap/internal/tools"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/schema"

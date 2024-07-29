@@ -1,6 +1,6 @@
-package model
+package zap_model
 
-type Car struct {
+type Zap struct {
 	ID            int    `json:"id"`
 	BrandID       int    `json:"brandID" binding:"required"`
 	BrandLabel    string `json:"brandLabel" binding:"required"`

@@ -3,8 +3,8 @@ package dict_repo
 import (
 	"fmt"
 
-	tools "zap/internal/_shared"
-	dict_model "zap/internal/dict/domain"
+	"zap/internal/dict/dict_model"
+	tools "zap/internal/tools"
 )
 
 func (r *Repo) Years(req dict_model.Req) ([]dict_model.DTO, error) {

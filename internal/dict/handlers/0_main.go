@@ -1,7 +1,7 @@
 package dict_handlers
 
 import (
-	dict_model "zap/internal/dict/domain"
+	"zap/internal/dict/dict_model"
 
 	"github.com/gin-gonic/gin"
 )

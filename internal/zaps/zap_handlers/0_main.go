@@ -1,4 +1,4 @@
-package handlers
+package zap_handlers
 
 import (
 	"github.com/gin-gonic/gin"
