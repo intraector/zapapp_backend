@@ -80,11 +80,11 @@ func ReqError(r *http.Request, err error) error {
 
 }
 
-func LogRequest(r *http.Request) {
-	Logg(ReqToStr(r))
+func LogRequest(r *http.Request, structs ...any) {
+	Logg(ReqToStr(r, structs...))
 }
 
-func ReqToStr(r *http.Request) string {
+func ReqToStr(r *http.Request, structs ...any) string {
 	b := strings.Builder{}
 	b.WriteString("\n❆----------------\n")
 	b.WriteString("| Req: " + r.URL.Path)
@@ -100,15 +100,11 @@ func ReqToStr(r *http.Request) string {
 	}
 	var bodyBytes []byte
 	var err error
-	body := r.Body
-	if body != nil {
-		bodyBytes, err = io.ReadAll(body)
-		if err != nil {
-			b.WriteString(fmt.Sprintf("| Body reading error: %v", err))
-			return b.String()
-		}
+	bodyBytes, err = io.ReadAll(r.Body)
+	if err != nil {
+		b.WriteString(fmt.Sprintf("| Body reading error: %v", err))
+		return b.String()
 	}
-
 	if len(bodyBytes) > 0 {
 		var prettyJSON bytes.Buffer
 		if err = json.Indent(&prettyJSON, bodyBytes, "| ", "  "); err != nil {
@@ -118,7 +114,13 @@ func ReqToStr(r *http.Request) string {
 		b.WriteString("\n| Body: ")
 		b.WriteString(string(prettyJSON.String()))
 	} else {
-		b.WriteString("\n| Body: No Body Supplied")
+		if len(structs) == 0 {
+			b.WriteString("\n| Body: No Body Supplied")
+		}
+	}
+	for i := range structs {
+		structJSON, _ := json.MarshalIndent(structs[i], "| ", "  ")
+		b.WriteString("\n| Struct: " + string(structJSON))
 	}
 	b.WriteString("\n❆----------------\n")
 	return b.String()

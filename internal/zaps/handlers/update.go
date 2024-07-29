@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
@@ -14,12 +15,12 @@ func (h *Handlers) Update() gin.HandlerFunc {
 
 	fn := func(c *gin.Context) {
 		defer tools.AbortOnPanic(c)
-		// tools.LogRequest(c)
+		// tools.LogRequest(c.Request)
 
 		var err error
 		car := model.Car{}
 
-		err = c.ShouldBind(&car)
+		err = json.NewDecoder(c.Request.Body).Decode(&car)
 		if err != nil {
 			tools.AbortWithErr422(c, err)
 			return
@@ -70,8 +71,6 @@ func (h *Handlers) Update() gin.HandlerFunc {
 			car.ID,
 		)
 
-		tools.Logg(query)
-
 		tag, err := h.DB.Exec(c, query)
 		if err != nil {
 			tools.LogError(err)
@@ -79,7 +78,7 @@ func (h *Handlers) Update() gin.HandlerFunc {
 			return
 		}
 		if tag.RowsAffected() == 0 {
-			tools.LogRequest(c.Request)
+			tools.LogRequest(c.Request, car)
 			tools.AbortWithErr404(c)
 			return
 		}
