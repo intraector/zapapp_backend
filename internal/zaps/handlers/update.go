@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"strings"
 	tools "zap/internal/_shared"
 	model "zap/internal/zaps/domain"
@@ -78,13 +77,11 @@ func (h *Handlers) Update() gin.HandlerFunc {
 			return
 		}
 		if tag.RowsAffected() == 0 {
-			tools.LogRequest(c.Request, car)
 			tools.AbortWithErr404(c)
 			return
 		}
 
-		c.IndentedJSON(http.StatusOK, gin.H{"message": "success"})
-
+		tools.Success(c)
 	}
 
 	return gin.HandlerFunc(fn)

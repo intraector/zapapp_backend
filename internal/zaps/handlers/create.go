@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"net/http"
 	"strings"
 	tools "zap/internal/_shared"
 	model "zap/internal/zaps/domain"
@@ -78,8 +77,7 @@ func (h *Handlers) Create() gin.HandlerFunc {
 			return
 		}
 
-		c.IndentedJSON(http.StatusOK, gin.H{"message": "success"})
-
+		tools.Success(c)
 	}
 
 	return gin.HandlerFunc(fn)

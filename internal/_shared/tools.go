@@ -86,43 +86,43 @@ func LogRequest(r *http.Request, structs ...any) {
 
 func ReqToStr(r *http.Request, structs ...any) string {
 	b := strings.Builder{}
-	b.WriteString("\n❆----------------\n")
-	b.WriteString("| Req: " + r.URL.Path)
+	b.WriteString("\n❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆\n")
+	b.WriteString("❆ Req: " + r.URL.Path)
 	if len(r.URL.RawQuery) > 0 {
-		b.WriteString("\n| Query: " + r.URL.RawQuery)
+		b.WriteString("\n❆ Query: " + r.URL.RawQuery)
 	}
 	if len(r.Header) > 0 {
-		b.WriteString("\n| Headers: {")
+		b.WriteString("\n❆ Headers: {")
 		for k, v := range r.Header {
-			b.WriteString(fmt.Sprintf("\n|    %v: %v", k, v))
+			b.WriteString(fmt.Sprintf("\n❆    %v: %v", k, v))
 		}
-		b.WriteString("\n| }")
+		b.WriteString("\n❆ }")
 	}
 	var bodyBytes []byte
 	var err error
 	bodyBytes, err = io.ReadAll(r.Body)
 	if err != nil {
-		b.WriteString(fmt.Sprintf("| Body reading error: %v", err))
+		b.WriteString(fmt.Sprintf("❆ Body reading error: %v", err))
 		return b.String()
 	}
 	if len(bodyBytes) > 0 {
 		var prettyJSON bytes.Buffer
-		if err = json.Indent(&prettyJSON, bodyBytes, "| ", "  "); err != nil {
-			b.WriteString(fmt.Sprintf("| JSON parse error: %v", err))
+		if err = json.Indent(&prettyJSON, bodyBytes, "❆ ", "  "); err != nil {
+			b.WriteString(fmt.Sprintf("❆ JSON parse error: %v", err))
 			return b.String()
 		}
-		b.WriteString("\n| Body: ")
+		b.WriteString("\n❆ Body: ")
 		b.WriteString(string(prettyJSON.String()))
 	} else {
 		if len(structs) == 0 {
-			b.WriteString("\n| Body: No Body Supplied")
+			b.WriteString("\n❆ Body: No Body Supplied")
 		}
 	}
 	for i := range structs {
-		structJSON, _ := json.MarshalIndent(structs[i], "| ", "  ")
-		b.WriteString("\n| Struct: " + string(structJSON))
+		structJSON, _ := json.MarshalIndent(structs[i], "❆ ", "  ")
+		b.WriteString("\n❆ Struct: " + string(structJSON))
 	}
-	b.WriteString("\n❆----------------\n")
+	b.WriteString("\n❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆ ❆\n")
 	return b.String()
 }
 
@@ -144,6 +144,18 @@ func AbortWithErr(c *gin.Context, code int, messages ...any) {
 
 	c.AbortWithStatusJSON(code, body)
 
+}
+
+func Success(c *gin.Context, data ...any) {
+	b := strings.Builder{}
+	if len(data) == 0 {
+		b.WriteString("Success")
+	} else {
+		for i := range len(data) {
+			b.WriteString(fmt.Sprintf("%v", data[i]))
+		}
+	}
+	c.IndentedJSON(http.StatusOK, gin.H{"message": b.String()})
 }
 
 func AbortWithErr500(c *gin.Context, messages ...any) {
