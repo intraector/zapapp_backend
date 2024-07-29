@@ -1,4 +1,4 @@
-package dict_handlers
+package dict_endpoints
 
 import (
 	"zap/internal/dict/dict_model"

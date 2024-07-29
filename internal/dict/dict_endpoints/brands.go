@@ -1,20 +1,19 @@
-package dict_handlers
+package dict_endpoints
 
 import (
+	"net/http"
+
 	"zap/internal/dict/dict_model"
 	tools "zap/internal/tools"
-
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/schema"
 )
 
-func (h *Handlers) Years() gin.HandlerFunc {
+func (h *Handlers) Brands() gin.HandlerFunc {
 
 	fn := func(c *gin.Context) {
 		defer tools.AbortOnPanic(c)
-		// tools.LogRequest(c)
 
 		var err error
 		req := dict_model.Req{Limit: 20}
@@ -30,22 +29,7 @@ func (h *Handlers) Years() gin.HandlerFunc {
 			return
 		}
 
-		if req.BrandID == 0 {
-			tools.AbortWithErr422(c, "brandID is required")
-			return
-		}
-
-		if req.ModelID == 0 {
-			tools.AbortWithErr422(c, "modelID is required")
-			return
-		}
-
-		if req.GenID == 0 {
-			tools.AbortWithErr422(c, "genID is required")
-			return
-		}
-
-		list, err := h.Repo.Years(req)
+		list, err := h.Repo.Brands(req)
 		if err != nil {
 			tools.AbortWithErr500(c)
 			tools.LogErrorWithStack(err, req)

@@ -9,8 +9,8 @@ import (
 	zap_db "zap/internal/database"
 	dict_repo "zap/internal/dict/data/repo"
 	dict_db "zap/internal/dict/database"
-	dict_handlers "zap/internal/dict/handlers"
-	"zap/internal/zaps/zap_handlers"
+	"zap/internal/dict/dict_endpoints"
+	"zap/internal/zap/zap_endpoints"
 )
 
 var dictDB *sql.DB
@@ -22,17 +22,20 @@ func main() {
 	dictDB = dict_db.New()
 	defer dictDB.Close()
 
-	dictHandlers := dict_handlers.New(
+	dictEndpoints := dict_endpoints.New(
 		v1.Group("/dict"),
 		&dict_repo.Repo{DB: dictDB},
 	)
 
-	dictHandlers.Init()
+	dictEndpoints.Init()
 
 	zapDB := zap_db.New()
 	defer zapDB.Close(context.Background())
 
-	zapHandlers := zap_handlers.New(v1.Group("/zaps"), zapDB)
+	zapHandlers := zap_endpoints.New(
+		v1.Group("/zaps"),
+		zapDB,
+	)
 	zapHandlers.Init()
 
 	router.Run("localhost:8080")

@@ -1,6 +1,7 @@
-package dict_handlers
+package dict_endpoints
 
 import (
+	"fmt"
 	"net/http"
 
 	"zap/internal/dict/dict_model"
@@ -10,7 +11,7 @@ import (
 	"github.com/gorilla/schema"
 )
 
-func (h *Handlers) Modifications() gin.HandlerFunc {
+func (h *Handlers) Generations() gin.HandlerFunc {
 
 	fn := func(c *gin.Context) {
 		defer tools.AbortOnPanic(c)
@@ -31,16 +32,15 @@ func (h *Handlers) Modifications() gin.HandlerFunc {
 		}
 
 		if req.BrandID == 0 {
-			tools.AbortWithErr422(c, "BrandID is required")
+			tools.Logrb(fmt.Sprint(err))
+			c.AbortWithStatusJSON(
+				http.StatusUnprocessableEntity,
+				gin.H{"error": "brandID is required"},
+			)
 			return
 		}
 
-		if req.BodyTypeID == 0 {
-			tools.AbortWithErr422(c, "bodyTypeID is required")
-			return
-		}
-
-		list, err := h.Repo.Modifications(req)
+		list, err := h.Repo.Generations(req)
 		if err != nil {
 			tools.AbortWithErr500(c)
 			tools.LogErrorWithStack(err, req)
